@@ -17,14 +17,13 @@ let logs = [];
 let users = [];
 
 // ❌ repeatedly loads file into memory unnecessarily
+let cachedUsers = null;
 function loadUsersSync() {
+  if (cachedUsers) return cachedUsers;
   const filePath = path.join(__dirname, "users.json");
-
-  // ❌ blocking I/O call
   const fileData = fs.readFileSync(filePath, "utf8");
-
-  // ❌ unnecessary parsing 
-  return JSON.parse(fileData);
+  cachedUsers = JSON.parse(fileData);
+  return cachedUsers;
 }
 
 // ❌ expensive CPU loop (blocks event loop)
@@ -77,10 +76,10 @@ app.post("/login", express.json(), (req, res) => {
  Returns logs array (unbounded memory)
 ***************************************************/
 app.get("/logs", (req, res) => {
-  // ❌ memory keeps growing
-  res.json(logs);
+app.get("/logs", (req, res) => {
+  const limit = 100;
+  res.json(logs.slice(-limit));
 });
-
 /***************************************************
  Server start
 ***************************************************/
