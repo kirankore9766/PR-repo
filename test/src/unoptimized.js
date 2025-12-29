@@ -76,7 +76,6 @@ app.post("/login", express.json(), (req, res) => {
  Returns logs array (unbounded memory)
 ***************************************************/
 app.get("/logs", (req, res) => {
-app.get("/logs", (req, res) => {
   const limit = 100;
   res.json(logs.slice(-limit));
 });
