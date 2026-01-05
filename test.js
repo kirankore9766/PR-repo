@@ -1,2 +1,1 @@
-fhfhgfghgh
-hjfhhg
+console.log("hello"
