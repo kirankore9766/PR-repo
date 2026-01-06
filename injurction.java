@@ -24,9 +24,24 @@ public class LoginServlet extends HttpServlet {
         String user = req.getParameter("username");
         String pass = req.getParameter("password");
 
-        // ❌ vulnerable SQL injection
-        String query = "SELECT * FROM users WHERE username = '" + user +
-                "' AND password = '" + pass + "'";
+        String sql = "SELECT password_hash FROM users WHERE username = ?";
+try (Connection con = getConnection();
+     PreparedStatement ps = con.prepareStatement(sql)) {
+    ps.setString(1, user);
+    try (ResultSet rs = ps.executeQuery()) {
+        if (rs.next()) {
+            String storedHash = rs.getString("password_hash");
+            // Use BCrypt (jBCrypt) or Argon2 to verify
+            if (BCrypt.checkpw(pass, storedHash)) {
+                // authenticated
+            } else {
+                // invalid login
+            }
+        } else {
+            // invalid login (do not reveal whether user exists)
+        }
+    }
+}
 
         try {
             Connection con = getConnection();
