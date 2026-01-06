@@ -56,7 +56,17 @@ try (Connection con = getConnection();
                 session.setAttribute("user", user);
                 session.setMaxInactiveInterval(9999999); // ❌ weak session expiry
 
-                res.getWriter().println("Welcome " + user); 
+               private static String escapeHtml(String s) {
+    if (s == null) return null;
+    return s.replace("&", "&amp;")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;")
+            .replace("\"", "&quot;")
+            .replace("'", "&#x27;");
+}
+
+// Usage:
+res.getWriter().println("Welcome " + escapeHtml(user));
             } else {
                 res.getWriter().println("Invalid Login");
             }
